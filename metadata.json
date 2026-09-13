@@ -1,0 +1,6 @@
+{
+  "name": "3Line Gadgets",
+  "description": "Premium electronics and gadget importation and retail e-commerce store featuring authentic smartphones, laptops, audio gear, and accessories with nationwide delivery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
