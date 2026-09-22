@@ -65,16 +65,36 @@ function setToCache<T>(key: string, data: T): void {
 }
 
 // Timeout wrapper so external DB calls never freeze page rendering
-async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, fallback: T): Promise<T> {
+function createTimeoutPostgrestError(message: string): any {
+  return {
+    name: 'PostgrestError',
+    message,
+    details: '',
+    hint: '',
+    code: 'TIMEOUT',
+  };
+}
+
+async function withTimeout<T, F = T>(
+  promise: PromiseLike<T> | Promise<T>,
+  timeoutMs: number,
+  fallback: F
+): Promise<T | F> {
   let timer: NodeJS.Timeout;
-  const timeoutPromise = new Promise<T>((resolve) => {
+  const timeoutPromise = new Promise<F>((resolve) => {
     timer = setTimeout(() => resolve(fallback), timeoutMs);
   });
   return Promise.race([
-    promise.then((val) => {
-      clearTimeout(timer);
-      return val;
-    }),
+    Promise.resolve(promise)
+      .then((val) => {
+        clearTimeout(timer);
+        return val;
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        console.warn('Database request error, falling back:', err?.message || err);
+        return fallback;
+      }),
     timeoutPromise,
   ]);
 }
@@ -530,9 +550,9 @@ export async function getStorefrontCatalog(
     query = query.range(offset, offset + limit - 1);
 
     const { data, count, error } = await withTimeout(
-      query as Promise<any>,
-      2000,
-      { data: null, count: 0, error: new Error('Supabase request timed out') }
+      Promise.resolve(query),
+      3500,
+      { data: null, count: null, error: createTimeoutPostgrestError('Supabase request timed out') }
     );
 
     if (error || !data) {
@@ -704,16 +724,16 @@ export async function getStorefrontCategories(): Promise<StorefrontCategory[]> {
 
   try {
     const supabase = await createClient();
-    const query = supabase
-      .from('categories')
-      .select('id, name, slug, description, image_url, is_active, products(count)')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
-
     const { data, error } = await withTimeout(
-      query as Promise<any>,
-      2000,
-      { data: null, error: new Error('Timeout') }
+      Promise.resolve(
+        supabase
+          .from('categories')
+          .select('id, name, slug, description, image_url, is_active, products(count)')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true })
+      ),
+      3500,
+      { data: null, error: createTimeoutPostgrestError('Categories fetch timed out') }
     );
 
     if (error || !data || data.length === 0) {
@@ -779,16 +799,16 @@ export async function getStorefrontBrands(): Promise<StorefrontBrand[]> {
 
   try {
     const supabase = await createClient();
-    const query = supabase
-      .from('brands')
-      .select('id, name, slug, description, logo_url, is_active, products(count)')
-      .eq('is_active', true)
-      .order('name', { ascending: true });
-
     const { data, error } = await withTimeout(
-      query as Promise<any>,
-      2000,
-      { data: null, error: new Error('Timeout') }
+      Promise.resolve(
+        supabase
+          .from('brands')
+          .select('id, name, slug, description, logo_url, is_active, products(count)')
+          .eq('is_active', true)
+          .order('name', { ascending: true })
+      ),
+      3500,
+      { data: null, error: createTimeoutPostgrestError('Brands fetch timed out') }
     );
 
     if (error || !data || data.length === 0) {
@@ -848,50 +868,50 @@ export async function getStorefrontProductBySlug(
 
   try {
     const supabase = await createClient();
-    const query = supabase
-      .from('products')
-      .select(
-        `
-        id,
-        name,
-        slug,
-        description,
-        short_description,
-        base_price,
-        compare_at_price,
-        specifications,
-        is_active,
-        is_featured,
-        created_at,
-        category:categories!inner (id, name, slug, image_url, is_active),
-        brand:brands (id, name, slug, logo_url, is_active),
-        variants:product_variants (
-          id,
-          name,
-          sku,
-          price,
-          compare_at_price,
-          stock_quantity,
-          low_stock_threshold,
-          is_active
-        ),
-        images:product_images (
-          id,
-          image_url,
-          alt_text,
-          sort_order,
-          is_primary
-        )
-      `
-      )
-      .eq('slug', slug)
-      .eq('is_active', true)
-      .maybeSingle();
-
     const { data, error } = await withTimeout(
-      query as Promise<any>,
-      2000,
-      { data: null, error: new Error('Timeout') }
+      Promise.resolve(
+        supabase
+          .from('products')
+          .select(
+            `
+            id,
+            name,
+            slug,
+            description,
+            short_description,
+            base_price,
+            compare_at_price,
+            specifications,
+            is_active,
+            is_featured,
+            created_at,
+            category:categories!inner (id, name, slug, image_url, is_active),
+            brand:brands (id, name, slug, logo_url, is_active),
+            variants:product_variants (
+              id,
+              name,
+              sku,
+              price,
+              compare_at_price,
+              stock_quantity,
+              low_stock_threshold,
+              is_active
+            ),
+            images:product_images (
+              id,
+              image_url,
+              alt_text,
+              sort_order,
+              is_primary
+            )
+          `
+          )
+          .eq('slug', slug)
+          .eq('is_active', true)
+          .maybeSingle()
+      ),
+      3500,
+      { data: null, error: createTimeoutPostgrestError('Product by slug fetch timed out') }
     );
 
     if (error || !data) {
