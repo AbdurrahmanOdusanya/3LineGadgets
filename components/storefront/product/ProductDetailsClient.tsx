@@ -18,7 +18,7 @@ import { ProductActions } from './ProductActions';
 import { ProductTrustBadges } from './ProductTrustBadges';
 import { ProductTabs } from './ProductTabs';
 import { RelatedProductsSection } from './RelatedProductsSection';
-import { Star, Shield, Cpu, Tag } from 'lucide-react';
+import { Shield, Cpu, Tag } from 'lucide-react';
 
 interface ProductDetailsClientProps {
   product: StorefrontProduct;
@@ -39,15 +39,6 @@ export function ProductDetailsClient({
 
   // Current pricing based on selected variant
   const currentPrice = selectedVariant ? selectedVariant.price : product.base_price;
-  const currentCompareAtPrice = selectedVariant
-    ? selectedVariant.compare_at_price
-    : product.compare_at_price;
-
-  // Discount computation
-  const discountPercent =
-    currentCompareAtPrice && currentCompareAtPrice > currentPrice
-      ? Math.round(((currentCompareAtPrice - currentPrice) / currentCompareAtPrice) * 100)
-      : null;
 
   // Inventory & stock state of the selected variant
   const stockQuantity = selectedVariant ? selectedVariant.stock_quantity : 0;
@@ -82,7 +73,6 @@ export function ProductDetailsClient({
               images={product.images}
               productName={product.name}
               isFeatured={product.is_featured}
-              discountPercent={discountPercent}
             />
           </div>
 
@@ -109,7 +99,7 @@ export function ProductDetailsClient({
                     <>
                       <span className="text-slate-300">•</span>
                       <Link
-                        href={`/categories/${product.category.slug}`}
+                        href={`/shop?category=${product.category.slug}`}
                         className="text-slate-500 hover:text-slate-900 transition-colors"
                       >
                         {product.category.name}
@@ -131,22 +121,11 @@ export function ProductDetailsClient({
                 {product.name}
               </h1>
 
-              {/* Star Rating / Reviews summary */}
+              {/* Verified Authentic badge (no rating) */}
               <div className="flex items-center gap-2 pt-1">
-                <div className="flex items-center text-amber-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400" />
-                  ))}
-                </div>
-                <span className="text-xs font-bold text-slate-700">
-                  {(product.rating || 4.9).toFixed(1)}
-                </span>
-                <span className="text-xs text-slate-400">
-                  ({product.review_count || 42} verified reviews)
-                </span>
-                <span className="text-slate-300">•</span>
-                <span className="text-xs text-emerald-600 font-medium">
-                  Verified Authentic
+                <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                  <Shield className="w-3.5 h-3.5" />
+                  100% Genuine &amp; Verified Authentic
                 </span>
               </div>
             </div>
@@ -155,7 +134,6 @@ export function ProductDetailsClient({
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/70 border border-slate-100">
               <ProductPrice
                 price={currentPrice}
-                compareAtPrice={currentCompareAtPrice}
               />
             </div>
 

@@ -20,14 +20,12 @@ interface ProductGalleryProps {
   images: StorefrontProductImage[];
   productName: string;
   isFeatured?: boolean;
-  discountPercent?: number | null;
 }
 
 export function ProductGallery({
   images,
   productName,
   isFeatured,
-  discountPercent,
 }: ProductGalleryProps) {
   // Sort images by sort_order
   const sortedImages = React.useMemo(() => {
@@ -88,11 +86,6 @@ export function ProductGallery({
             <span className="inline-flex items-center gap-1 bg-violet-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
               <Sparkles className="w-3 h-3" />
               Featured
-            </span>
-          )}
-          {discountPercent && discountPercent > 0 && (
-            <span className="inline-flex items-center bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-              {discountPercent}% OFF
             </span>
           )}
         </div>

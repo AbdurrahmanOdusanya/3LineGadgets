@@ -43,6 +43,42 @@ export const CATEGORY_IMAGE_MAP: Record<string, string> = {
   'accessories': 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=600&q=80',
 };
 
+// High-speed in-memory cache with TTL to eliminate multi-second database roundtrips
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+const MEMORY_CACHE = new Map<string, CacheEntry<any>>();
+
+function getFromCache<T>(key: string, ttlMs: number = 60000): T | null {
+  const entry = MEMORY_CACHE.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > ttlMs) {
+    MEMORY_CACHE.delete(key);
+    return null;
+  }
+  return entry.data as T;
+}
+
+function setToCache<T>(key: string, data: T): void {
+  MEMORY_CACHE.set(key, { data, timestamp: Date.now() });
+}
+
+// Timeout wrapper so external DB calls never freeze page rendering
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, fallback: T): Promise<T> {
+  let timer: NodeJS.Timeout;
+  const timeoutPromise = new Promise<T>((resolve) => {
+    timer = setTimeout(() => resolve(fallback), timeoutMs);
+  });
+  return Promise.race([
+    promise.then((val) => {
+      clearTimeout(timer);
+      return val;
+    }),
+    timeoutPromise,
+  ]);
+}
+
 // Fallback high-fidelity catalog for 3Line Gadgets
 const FALLBACK_PRODUCTS: StorefrontProduct[] = [
   {
@@ -384,6 +420,12 @@ function formatProduct(p: any): StorefrontProduct {
 export async function getStorefrontCatalog(
   options: StorefrontCatalogOptions = {}
 ): Promise<StorefrontCatalogResult> {
+  const cacheKey = `catalog_${JSON.stringify(options)}`;
+  const cached = getFromCache<StorefrontCatalogResult>(cacheKey, 30000);
+  if (cached) {
+    return cached;
+  }
+
   const page = Math.max(1, options.page || 1);
   const limit = Math.min(48, Math.max(1, options.limit || 12));
   const offset = (page - 1) * limit;
@@ -487,7 +529,11 @@ export async function getStorefrontCatalog(
     // Pagination bounds
     query = query.range(offset, offset + limit - 1);
 
-    const { data, count, error } = await query;
+    const { data, count, error } = await withTimeout(
+      query as Promise<any>,
+      2000,
+      { data: null, count: 0, error: new Error('Supabase request timed out') }
+    );
 
     if (error || !data) {
       console.warn('Supabase storefront query issue, applying fallback catalog:', error?.message);
@@ -533,13 +579,15 @@ export async function getStorefrontCatalog(
     const combined = [...products, ...supplemental];
     const totalCount = (count || products.length) + supplemental.length;
 
-    return {
+    const result: StorefrontCatalogResult = {
       products: combined.slice(0, limit),
       totalCount,
       page,
       limit,
       totalPages: Math.max(1, Math.ceil(totalCount / limit)),
     };
+    setToCache(cacheKey, result);
+    return result;
   } catch (err) {
     console.error('Fatal error in getStorefrontCatalog:', err);
     return getFallbackCatalogResult(options);
@@ -651,27 +699,37 @@ export async function getStorefrontBestSellers(): Promise<StorefrontProduct[]> {
  * Fetch active storefront categories with actual product counts
  */
 export async function getStorefrontCategories(): Promise<StorefrontCategory[]> {
+  const cached = getFromCache<StorefrontCategory[]>('categories', 60000);
+  if (cached) return cached;
+
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const query = supabase
       .from('categories')
       .select('id, name, slug, description, image_url, is_active, products(count)')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
+    const { data, error } = await withTimeout(
+      query as Promise<any>,
+      2000,
+      { data: null, error: new Error('Timeout') }
+    );
+
     if (error || !data || data.length === 0) {
-      return [
+      const fallback = [
         { id: 'ca-1', name: 'Smartphones & Tablets', slug: 'smartphones-tablets', description: 'Flagship phones and high-performance tablets.', image_url: CATEGORY_IMAGE_MAP['smartphones-tablets'], itemCount: 4 },
         { id: 'ca-2', name: 'Laptops & Computers', slug: 'laptops-computers', description: 'Ultra-portable laptops, MacBooks, and desktop workstations.', image_url: CATEGORY_IMAGE_MAP['laptops-computers'], itemCount: 3 },
         { id: 'ca-3', name: 'Audio & Sound', slug: 'audio-sound', description: 'Studio headphones, noise-canceling earbuds, and speakers.', image_url: CATEGORY_IMAGE_MAP['audio-sound'], itemCount: 4 },
         { id: 'ca-4', name: 'Wearables & Smart Home', slug: 'wearables-smart-home', description: 'Smartwatches, fitness trackers, and wearables.', image_url: CATEGORY_IMAGE_MAP['wearables-smart-home'], itemCount: 2 },
         { id: 'ca-5', name: 'Power & Accessories', slug: 'power-accessories', description: 'High-wattage GaN chargers, power banks, and cables.', image_url: CATEGORY_IMAGE_MAP['power-accessories'], itemCount: 3 },
       ];
+      setToCache('categories', fallback);
+      return fallback;
     }
 
-    return data.map((c: any) => {
+    const formatted = data.map((c: any) => {
       const rawCount = c.products?.[0]?.count ?? 0;
-      // Guarantee realistic active representation
       const count = Math.max(rawCount, 2);
       const imageUrl = c.image_url || CATEGORY_IMAGE_MAP[c.slug] || CATEGORY_IMAGE_MAP['smartphones-tablets'];
 
@@ -684,15 +742,19 @@ export async function getStorefrontCategories(): Promise<StorefrontCategory[]> {
         itemCount: count,
       };
     });
+
+    setToCache('categories', formatted);
+    return formatted;
   } catch (err) {
     console.error('Error fetching storefront categories:', err);
-    return [
+    const fallback = [
       { id: 'ca-1', name: 'Smartphones & Tablets', slug: 'smartphones-tablets', description: 'Flagship phones and high-performance tablets.', image_url: CATEGORY_IMAGE_MAP['smartphones-tablets'], itemCount: 4 },
       { id: 'ca-2', name: 'Laptops & Computers', slug: 'laptops-computers', description: 'Ultra-portable laptops, MacBooks, and desktop workstations.', image_url: CATEGORY_IMAGE_MAP['laptops-computers'], itemCount: 3 },
       { id: 'ca-3', name: 'Audio & Sound', slug: 'audio-sound', description: 'Studio headphones, noise-canceling earbuds, and speakers.', image_url: CATEGORY_IMAGE_MAP['audio-sound'], itemCount: 4 },
       { id: 'ca-4', name: 'Wearables & Smart Home', slug: 'wearables-smart-home', description: 'Smartwatches, fitness trackers, and wearables.', image_url: CATEGORY_IMAGE_MAP['wearables-smart-home'], itemCount: 2 },
       { id: 'ca-5', name: 'Power & Accessories', slug: 'power-accessories', description: 'High-wattage GaN chargers, power banks, and cables.', image_url: CATEGORY_IMAGE_MAP['power-accessories'], itemCount: 3 },
     ];
+    return fallback;
   }
 }
 
@@ -712,25 +774,36 @@ export async function getStorefrontCategoryBySlug(
  * Fetch active storefront brands with product counts
  */
 export async function getStorefrontBrands(): Promise<StorefrontBrand[]> {
+  const cached = getFromCache<StorefrontBrand[]>('brands', 60000);
+  if (cached) return cached;
+
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const query = supabase
       .from('brands')
       .select('id, name, slug, description, logo_url, is_active, products(count)')
       .eq('is_active', true)
       .order('name', { ascending: true });
 
+    const { data, error } = await withTimeout(
+      query as Promise<any>,
+      2000,
+      { data: null, error: new Error('Timeout') }
+    );
+
     if (error || !data || data.length === 0) {
-      return [
+      const fallback = [
         { id: 'ba-1', name: 'Apple', slug: 'apple', itemCount: 6 },
         { id: 'ba-2', name: 'Samsung', slug: 'samsung', itemCount: 4 },
         { id: 'ba-3', name: 'Sony', slug: 'sony', itemCount: 4 },
         { id: 'ba-4', name: 'Anker', slug: 'anker', itemCount: 3 },
         { id: 'ba-5', name: 'Dell', slug: 'dell', itemCount: 2 },
       ];
+      setToCache('brands', fallback);
+      return fallback;
     }
 
-    return data.map((b: any) => ({
+    const formatted = data.map((b: any) => ({
       id: b.id,
       name: b.name,
       slug: b.slug,
@@ -738,6 +811,9 @@ export async function getStorefrontBrands(): Promise<StorefrontBrand[]> {
       logo_url: b.logo_url,
       itemCount: Math.max(b.products?.[0]?.count ?? 0, 1),
     }));
+
+    setToCache('brands', formatted);
+    return formatted;
   } catch (err) {
     console.error('Error fetching storefront brands:', err);
     return [
@@ -766,9 +842,13 @@ export async function getStorefrontBrandBySlug(
 export async function getStorefrontProductBySlug(
   slug: string
 ): Promise<StorefrontProduct | null> {
+  const cacheKey = `product_${slug}`;
+  const cached = getFromCache<StorefrontProduct | null>(cacheKey, 60000);
+  if (cached !== null) return cached;
+
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const query = supabase
       .from('products')
       .select(
         `
@@ -808,12 +888,21 @@ export async function getStorefrontProductBySlug(
       .eq('is_active', true)
       .maybeSingle();
 
+    const { data, error } = await withTimeout(
+      query as Promise<any>,
+      2000,
+      { data: null, error: new Error('Timeout') }
+    );
+
     if (error || !data) {
       const fallback = FALLBACK_PRODUCTS.find((p) => p.slug === slug);
+      if (fallback) setToCache(cacheKey, fallback);
       return fallback || null;
     }
 
-    return formatProduct(data);
+    const formatted = formatProduct(data);
+    setToCache(cacheKey, formatted);
+    return formatted;
   } catch (err) {
     console.error('Error fetching product by slug:', err);
     const fallback = FALLBACK_PRODUCTS.find((p) => p.slug === slug);

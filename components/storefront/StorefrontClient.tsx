@@ -5,19 +5,15 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import type { StorefrontProduct, StorefrontCategory } from '@/types/storefront';
 import { StorefrontNavbar } from '@/components/storefront/StorefrontNavbar';
 import { HeroBanner } from '@/components/storefront/HeroBanner';
-import { CategorySection } from '@/components/storefront/CategorySection';
-import { PromotionalBanner } from '@/components/storefront/PromotionalBanner';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { StorefrontFooter } from '@/components/storefront/StorefrontFooter';
-import { QuickViewModal } from '@/components/storefront/QuickViewModal';
 import { CartDrawer } from '@/components/storefront/CartDrawer';
-import { ArrowRight, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 interface StorefrontClientProps {
   initialProducts: StorefrontProduct[];
@@ -31,11 +27,8 @@ interface StorefrontClientProps {
 
 export function StorefrontClient({
   initialProducts,
-  categories,
   userProfile,
 }: StorefrontClientProps) {
-  const [quickViewProduct, setQuickViewProduct] = useState<StorefrontProduct | null>(null);
-
   // Split products: featured or best-sellers
   const bestSellers = initialProducts.slice(0, 8);
 
@@ -46,16 +39,10 @@ export function StorefrontClient({
 
       {/* Main Homepage Container */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-12 sm:space-y-16 w-full">
-        {/* 1. Hero Section */}
+        {/* Hero Section */}
         <HeroBanner />
 
-        {/* 2. Browse by Category */}
-        <CategorySection categories={categories} />
-
-        {/* 3. Promotional Special Offer Banner */}
-        <PromotionalBanner />
-
-        {/* 4. Explore Our Best Sellers / Featured Products */}
+        {/* Explore Our Best Sellers / Featured Products */}
         <section className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
@@ -79,7 +66,6 @@ export function StorefrontClient({
               <ProductCard
                 key={product.id}
                 product={product}
-                onQuickView={setQuickViewProduct}
               />
             ))}
           </div>
@@ -88,12 +74,6 @@ export function StorefrontClient({
 
       {/* Footer */}
       <StorefrontFooter />
-
-      {/* Quick View Modal */}
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-      />
 
       {/* Cart Drawer */}
       <CartDrawer />

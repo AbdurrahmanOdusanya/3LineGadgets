@@ -106,20 +106,20 @@ export function TrackOrderClient() {
 
           <form onSubmit={handleTrack} className="mt-6 flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Package className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              <Package className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-600 pointer-events-none" />
               <Input
                 type="text"
                 placeholder="Order Number (e.g. 3LG-89214)"
                 value={orderNumber}
                 onChange={(e) => setOrderNumber(e.target.value)}
                 required
-                className="pl-10 h-11 text-xs sm:text-sm"
+                className="pl-10 h-11 text-xs sm:text-sm border border-slate-200 hover:border-violet-300 focus:border-violet-600 focus:ring-4 focus:ring-violet-500/10 bg-white text-slate-900 placeholder:text-slate-400 rounded-xl shadow-2xs font-normal"
               />
             </div>
             <Button
               type="submit"
               disabled={isSearching || !orderNumber.trim()}
-              className="h-11 px-6 font-bold text-xs sm:text-sm cursor-pointer"
+              className="h-11 px-6 font-bold text-xs sm:text-sm cursor-pointer bg-violet-600 hover:bg-violet-700 text-white rounded-xl shadow-xs"
             >
               {isSearching ? 'Tracking...' : 'Track Package'}
             </Button>
@@ -138,8 +138,8 @@ export function TrackOrderClient() {
       {/* Result Display */}
       {searched && !isSearching && orderData && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <Card className="border-slate-200/80 shadow-xs overflow-hidden">
-            <div className="p-5 sm:p-6 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Card className="border border-slate-200 bg-white shadow-xs overflow-hidden">
+            <div className="p-5 sm:p-6 bg-gradient-to-r from-violet-700 to-indigo-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Tracking Summary

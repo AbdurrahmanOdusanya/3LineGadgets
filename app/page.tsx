@@ -4,25 +4,21 @@
 // ==============================================================================
 
 import { getCurrentProfile } from '@/lib/auth/session';
-import {
-  getStorefrontFeaturedProducts,
-  getStorefrontCategories,
-} from '@/lib/actions/storefront';
+import { getStorefrontFeaturedProducts } from '@/lib/actions/storefront';
 import { StorefrontClient } from '@/components/storefront/StorefrontClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [products, categories, profile] = await Promise.all([
+  const [products, profile] = await Promise.all([
     getStorefrontFeaturedProducts(),
-    getStorefrontCategories(),
     getCurrentProfile(),
   ]);
 
   return (
     <StorefrontClient
       initialProducts={products}
-      categories={categories}
+      categories={[]}
       userProfile={
         profile
           ? {

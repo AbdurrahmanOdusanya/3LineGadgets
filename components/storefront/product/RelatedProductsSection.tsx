@@ -5,10 +5,9 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { StorefrontProduct } from '@/types/storefront';
 import { ProductCard } from '@/components/storefront/ProductCard';
-import { QuickViewModal } from '@/components/storefront/QuickViewModal';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -23,8 +22,6 @@ export function RelatedProductsSection({
   categorySlug,
   categoryName,
 }: RelatedProductsSectionProps) {
-  const [quickViewProduct, setQuickViewProduct] = useState<StorefrontProduct | null>(null);
-
   if (!products || products.length === 0) {
     return null;
   }
@@ -49,7 +46,7 @@ export function RelatedProductsSection({
 
         {categorySlug && (
           <Link
-            href={`/categories/${categorySlug}`}
+            href={`/shop?category=${categorySlug}`}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700 hover:underline"
           >
             <span>View All in {categoryName || 'Category'}</span>
@@ -58,24 +55,15 @@ export function RelatedProductsSection({
         )}
       </div>
 
-      {/* Grid of Related Products using Feature 3 ProductCard */}
+      {/* Grid of Related Products */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {products.map((item) => (
           <ProductCard
             key={item.id}
             product={item}
-            onQuickView={(p) => setQuickViewProduct(p)}
           />
         ))}
       </div>
-
-      {/* Quick View Modal integration */}
-      {quickViewProduct && (
-        <QuickViewModal
-          product={quickViewProduct}
-          onClose={() => setQuickViewProduct(null)}
-        />
-      )}
     </section>
   );
 }

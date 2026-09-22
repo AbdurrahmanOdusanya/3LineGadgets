@@ -22,21 +22,48 @@ export function AdminLayoutShell({
   userProfile,
   children,
 }: AdminLayoutShellProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('3lg_admin_sidebar_collapsed');
+        if (saved !== null) {
+          return saved === 'true';
+        }
+      } catch {
+        // Ignore
+      }
+    }
+    return false;
+  });
+
+  const handleToggleCollapse = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('3lg_admin_sidebar_collapsed', String(next));
+      } catch {
+        // Ignore
+      }
+      return next;
+    });
+  };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
+    <div className="flex min-h-screen bg-[#fcfcfe] text-slate-900 font-sans antialiased">
       {/* Sidebar Navigation */}
       <AdminSidebar
         userProfile={userProfile}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        isOpen={mobileSidebarOpen}
+        onClose={() => setMobileSidebarOpen(false)}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={handleToggleCollapse}
       />
 
       {/* Main Content Viewport */}
       <div className="flex flex-1 flex-col min-w-0">
         <AdminHeader
-          onMenuToggle={() => setSidebarOpen((prev) => !prev)}
+          onMenuToggle={() => setMobileSidebarOpen((prev) => !prev)}
           userRole={userProfile.role}
           adminName={userProfile.full_name}
         />

@@ -40,7 +40,6 @@ import {
   slugify,
   generateSKU,
   formatNaira,
-  calculateDiscount,
 } from '@/lib/utils';
 import type {
   ProductInput,
@@ -75,7 +74,6 @@ export function ProductForm({
   const [shortDescription, setShortDescription] = useState(initialData?.short_description || '');
   const [description, setDescription] = useState(initialData?.description || '');
   const [basePrice, setBasePrice] = useState<number | string>(initialData?.base_price || '');
-  const [compareAtPrice, setCompareAtPrice] = useState<number | string>(initialData?.compare_at_price || '');
   const [isActive, setIsActive] = useState(initialData?.is_active ?? true);
   const [isFeatured, setIsFeatured] = useState(initialData?.is_featured ?? false);
 
@@ -172,7 +170,7 @@ export function ProductForm({
         name: `Variant ${prev.length + 1}`,
         sku: newSku,
         price: Number(basePrice) || 0,
-        compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null,
+        compareAtPrice: null,
         stockQuantity: 10,
         lowStockThreshold: 5,
         isActive: true,
@@ -323,7 +321,7 @@ export function ProductForm({
         ...v,
         sku: variantSku,
         price: Number(v.price) >= 0 ? Number(v.price) : Number(basePrice),
-        compareAtPrice: v.compareAtPrice ? Number(v.compareAtPrice) : null,
+        compareAtPrice: null,
         stockQuantity: Number(v.stockQuantity) >= 0 ? Number(v.stockQuantity) : 0,
         lowStockThreshold: Number(v.lowStockThreshold) >= 0 ? Number(v.lowStockThreshold) : 5,
       };
@@ -337,7 +335,7 @@ export function ProductForm({
       description: description.trim(),
       shortDescription: shortDescription.trim() || null,
       basePrice: Number(basePrice),
-      compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null,
+      compareAtPrice: null,
       specifications: specsObject,
       isActive,
       isFeatured,
@@ -381,8 +379,6 @@ export function ProductForm({
       setSubmitting(false);
     }
   };
-
-  const discount = calculateDiscount(basePrice, compareAtPrice);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto pb-16">
@@ -701,7 +697,7 @@ export function ProductForm({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block text-[11px] font-medium text-slate-600 mb-1">
                         Price (₦) <span className="text-rose-500">*</span>
@@ -713,20 +709,6 @@ export function ProductForm({
                         value={variant.price}
                         onChange={(e) => handleUpdateVariant(index, 'price', e.target.value)}
                         required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-600 mb-1">
-                        Compare-at (₦)
-                      </label>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={variant.compareAtPrice || ''}
-                        onChange={(e) => handleUpdateVariant(index, 'compareAtPrice', e.target.value ? e.target.value : null)}
-                        placeholder="Optional"
                       />
                     </div>
 
@@ -789,27 +771,6 @@ export function ProductForm({
                 <p className="text-xs text-slate-500 mt-1 font-medium">
                   Preview: {formatNaira(basePrice)}
                 </p>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Compare-at Price (Original MSRP)
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={compareAtPrice}
-                  onChange={(e) => setCompareAtPrice(e.target.value)}
-                  placeholder="280000"
-                />
-                {discount && (
-                  <div className="mt-2">
-                    <Badge variant="success" className="text-xs">
-                      {discount}% OFF Discount Displayed
-                    </Badge>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>

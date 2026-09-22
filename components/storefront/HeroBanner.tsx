@@ -8,7 +8,6 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface HeroBannerProps {
@@ -40,21 +39,10 @@ export function HeroBanner({ onExploreClick }: HeroBannerProps) {
           <div className="flex flex-wrap items-center gap-3.5 pt-2 font-manrope">
             <Button
               asChild
-              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 h-11 rounded-xl shadow-md shadow-violet-500/25 flex items-center gap-2 font-manrope"
+              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 h-11 rounded-xl shadow-md shadow-violet-500/25 flex items-center justify-center font-manrope"
             >
               <Link href="/shop">
-                <span>Shop Catalog</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-
-            <Button
-              asChild
-              variant="outline"
-              className="bg-white hover:bg-slate-50 text-slate-800 border-slate-200 font-semibold px-5 py-3 h-11 rounded-xl font-manrope"
-            >
-              <Link href="/categories">
-                <span>Browse Categories</span>
+                <span>Shop Now</span>
               </Link>
             </Button>
           </div>

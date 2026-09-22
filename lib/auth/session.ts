@@ -5,6 +5,7 @@
 
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import type { Profile } from '@/types/database';
 import type { AuthUser } from '@/types/auth';
@@ -12,10 +13,21 @@ import { AuthenticationError, ForbiddenError } from '@/lib/utils/errors';
 
 /**
  * Retrieves the currently authenticated Supabase Auth user.
+ * Fast-paths to null if no Supabase authentication cookies are present.
  * Wrapped in React cache to memoize across Server Component render trees.
  */
 export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
   try {
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.getAll();
+    const hasAuthToken = allCookies.some(
+      (c) => c.name.startsWith('sb-') || c.name.includes('auth-token')
+    );
+
+    if (!hasAuthToken) {
+      return null;
+    }
+
     const supabase = await createClient();
     const {
       data: { user },

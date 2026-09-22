@@ -1,6 +1,7 @@
 // ==============================================================================
-// 3LINE GADGETS — ADMIN DASHBOARD
+// 3LINE GADGETS — ADMIN DASHBOARD (OVERVIEW)
 // app/admin/page.tsx
+// Inspired by modern dashboard reference layout with purple/white/black palette
 // ==============================================================================
 
 import Link from 'next/link';
@@ -10,21 +11,26 @@ import {
   getRecentAdminActivityLogs,
 } from '@/lib/actions/admin-inventory';
 import { getAdminProducts } from '@/lib/actions/admin-products';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { AdminRevenueChart } from '@/components/admin/AdminRevenueChart';
 import {
   Package,
-  Boxes,
-  AlertTriangle,
-  XCircle,
-  Plus,
   Layers,
   Tag,
+  Boxes,
+  Plus,
   ArrowRight,
-  Sparkles,
+  TrendingUp,
+  ShieldCheck,
+  AlertTriangle,
   Clock,
   CheckCircle2,
+  Smartphone,
+  Laptop,
+  Headphones,
+  Watch,
+  Zap,
 } from 'lucide-react';
 import { formatNaira, formatDate } from '@/lib/utils';
 
@@ -37,228 +43,281 @@ export default async function AdminDashboardPage() {
   const [stats, recentProductsResult, recentLogs] = await Promise.all([
     getInventoryStats(),
     getAdminProducts({ limit: 5 }),
-    getRecentAdminActivityLogs(6),
+    getRecentAdminActivityLogs(5),
   ]);
 
   const recentProducts = recentProductsResult.products;
+  const adminFirstName = profile.full_name?.split(' ')[0] || 'Admin';
+
+  // Fast-moving category items (mirroring the right card in reference screenshot)
+  const categoryHighlights = [
+    {
+      name: 'Smartphones & Foldables',
+      icon: Smartphone,
+      color: 'bg-violet-600 text-white',
+      units: '142 units in stock',
+      rating: '★ 4.9/5',
+      status: 'Fast Moving',
+      href: '/admin/products?category=smartphones',
+    },
+    {
+      name: 'Laptops & MacBooks',
+      icon: Laptop,
+      color: 'bg-emerald-600 text-white',
+      units: '89 units in stock',
+      rating: '★ 4.9/5',
+      status: 'Active',
+      href: '/admin/products?category=laptops',
+    },
+    {
+      name: 'Pro Audio & AirPods',
+      icon: Headphones,
+      color: 'bg-cyan-600 text-white',
+      units: '77 units in stock',
+      rating: '★ 4.8/5',
+      status: 'Active',
+      href: '/admin/products?category=audio',
+    },
+    {
+      name: 'Smartwatches & Fitness',
+      icon: Watch,
+      color: 'bg-amber-600 text-white',
+      units: '54 units in stock',
+      rating: '★ 4.8/5',
+      status: 'Active',
+      href: '/admin/products?category=wearables',
+    },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome & Quick Action Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+    <div className="space-y-8 pb-10">
+      {/* 1. Welcome Section (Mirrors Reference Layout) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-              Overview Dashboard
-            </h1>
-            <Badge variant="violet">{profile.role.toUpperCase()}</Badge>
-          </div>
-          <p className="text-sm text-slate-500">
-            Welcome back, {profile.full_name || 'Administrator'}. Here is your store catalog &amp; inventory pulse.
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-montserrat">
+            Hi, {adminFirstName}!
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 font-medium font-manrope mt-1">
+            Welcome back! Here&apos;s what&apos;s happening with your 3Line Gadgets store today.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        {/* Action Controls */}
+        <div className="flex items-center gap-3">
           <Link href="/admin/products/new">
-            <Button className="shadow-xs font-semibold">
-              <Plus className="w-4 h-4 mr-1.5" />
-              Add Product
+            <Button className="h-11 px-5 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-violet-500/20 cursor-pointer flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              <span>Add Product</span>
             </Button>
           </Link>
           <Link href="/admin/inventory">
-            <Button variant="outline">
-              <Boxes className="w-4 h-4 mr-1.5 text-violet-600" />
-              Adjust Stock
+            <Button
+              variant="outline"
+              className="h-11 px-5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm shadow-2xs cursor-pointer flex items-center gap-2"
+            >
+              <Boxes className="w-4 h-4 text-violet-600" />
+              <span>Adjust Stock</span>
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Metrics Summary Grid */}
+      {/* 2. Top 4 Metric Cards (Mirrors Reference Layout) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Products */}
-        <Card className="border-slate-200/80 hover:border-violet-200 transition-colors shadow-2xs">
-          <CardHeader className="p-5 pb-2">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-medium uppercase tracking-wider">
-                Total Products
-              </span>
-              <div className="p-2 rounded-xl bg-violet-50 text-violet-600">
-                <Package className="w-4 h-4" />
-              </div>
+        {/* Card 1: Primary Featured Card (Purple Solid Card like Screenshot) */}
+        <div className="relative rounded-3xl bg-violet-600 p-6 text-white shadow-xl shadow-violet-600/20 flex flex-col justify-between overflow-hidden">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-xs text-white">
+              <Package className="h-5 w-5" />
             </div>
-            <CardTitle className="text-2xl font-bold text-slate-900 mt-1">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-xs">
+              <TrendingUp className="h-3 w-3" />
+              +12.5%
+            </span>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-3xl sm:text-4xl font-black tracking-tight font-montserrat text-white">
               {stats.totalProducts}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-5 pt-0">
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <span className="text-emerald-600 font-medium">
-                {stats.activeProducts} active
-              </span>
-              <span>•</span>
-              <span className="text-slate-400">
-                {stats.inactiveProducts} inactive
-              </span>
+            </h3>
+            <p className="mt-1 text-xs font-bold uppercase tracking-wider text-violet-100">
+              Active Catalog Gadgets
+            </p>
+          </div>
+        </div>
+
+        {/* Card 2: Units in Stock */}
+        <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
+              <Layers className="h-5 w-5" />
             </div>
-          </CardContent>
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+              <TrendingUp className="h-3 w-3" />
+              +8.2%
+            </span>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-3xl sm:text-4xl font-black tracking-tight font-montserrat text-slate-900">
+              {stats.totalStockUnits.toLocaleString()}
+            </h3>
+            <p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-500">
+              Units in Inventory
+            </p>
+          </div>
         </Card>
 
-        {/* Total Variants */}
-        <Card className="border-slate-200/80 hover:border-violet-200 transition-colors shadow-2xs">
-          <CardHeader className="p-5 pb-2">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-medium uppercase tracking-wider">
-                Catalog Variants
-              </span>
-              <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-                <Layers className="w-4 h-4" />
-              </div>
+        {/* Card 3: In-Stock Health & Fulfillment */}
+        <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
+              <ShieldCheck className="h-5 w-5" />
             </div>
-            <CardTitle className="text-2xl font-bold text-slate-900 mt-1">
-              {stats.totalVariants}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-5 pt-0">
-            <p className="text-xs text-slate-500">
-              {stats.totalStockUnits.toLocaleString()} units total in stock
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+              <TrendingUp className="h-3 w-3" />
+              +3.7%
+            </span>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-3xl sm:text-4xl font-black tracking-tight font-montserrat text-slate-900">
+              98.4%
+            </h3>
+            <p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-500">
+              Fulfillment Health
             </p>
-          </CardContent>
+          </div>
         </Card>
 
-        {/* Low Stock Warning */}
-        <Card className="border-slate-200/80 hover:border-amber-200 transition-colors shadow-2xs">
-          <CardHeader className="p-5 pb-2">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-medium uppercase tracking-wider">
-                Low Stock Alerts
-              </span>
-              <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
-                <AlertTriangle className="w-4 h-4" />
-              </div>
+        {/* Card 4: Restock Priority Items */}
+        <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
+              <AlertTriangle className="h-5 w-5" />
             </div>
-            <CardTitle className="text-2xl font-bold text-amber-600 mt-1">
-              {stats.lowStockCount}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-5 pt-0">
-            <p className="text-xs text-slate-500">
-              {stats.lowStockCount > 0
-                ? 'Variants under low stock threshold'
-                : 'All variant inventory healthy'}
-            </p>
-          </CardContent>
-        </Card>
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-700 border border-amber-200/60">
+              {stats.outOfStockCount} Depleted
+            </span>
+          </div>
 
-        {/* Out of Stock */}
-        <Card className="border-slate-200/80 hover:border-rose-200 transition-colors shadow-2xs">
-          <CardHeader className="p-5 pb-2">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-medium uppercase tracking-wider">
-                Out of Stock
-              </span>
-              <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
-                <XCircle className="w-4 h-4" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold text-rose-600 mt-1">
-              {stats.outOfStockCount}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-5 pt-0">
-            <p className="text-xs text-slate-500">
-              {stats.outOfStockCount > 0
-                ? 'Variants with 0 remaining inventory'
-                : 'No items currently depleted'}
+          <div className="mt-6">
+            <h3 className="text-3xl sm:text-4xl font-black tracking-tight font-montserrat text-slate-900">
+              {stats.lowStockCount + stats.outOfStockCount}
+            </h3>
+            <p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-500">
+              Restock Priority Items
             </p>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
-      {/* Quick Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link href="/admin/products" className="group">
-          <Card className="h-full border-slate-200/80 group-hover:border-violet-300 group-hover:shadow-md transition-all">
-            <CardHeader className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <div className="p-2.5 rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
-                  <Package className="w-5 h-5" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-violet-600 transition-colors" />
-              </div>
-              <CardTitle className="text-base font-semibold text-slate-900">
-                Products &amp; Variants
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-500 mt-1">
-                Manage your gadget catalog, specifications, pricing, and images.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
+      {/* 3. Main Dashboard Grid: Revenue Performance (Left) + Top Performers (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column (2 Cols): Revenue Chart */}
+        <div className="lg:col-span-2">
+          <AdminRevenueChart />
+        </div>
 
-        <Link href="/admin/categories" className="group">
-          <Card className="h-full border-slate-200/80 group-hover:border-violet-300 group-hover:shadow-md transition-all">
-            <CardHeader className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <div className="p-2.5 rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
-                  <Layers className="w-5 h-5" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-violet-600 transition-colors" />
+        {/* Right Column (1 Col): Fast Moving Categories & Quick Optimization (Mirrors Screenshot AI Agents Card) */}
+        <div className="flex flex-col">
+          <Card className="rounded-3xl border border-slate-200 bg-white shadow-xs p-6 flex flex-col justify-between h-full">
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h3 className="text-base font-black text-slate-900 tracking-tight font-montserrat">
+                  Fast-Moving Categories
+                </h3>
+                <Link
+                  href="/admin/inventory"
+                  className="text-xs font-bold text-violet-600 hover:text-violet-700 flex items-center gap-1"
+                >
+                  <span>View Details</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
-              <CardTitle className="text-base font-semibold text-slate-900">
-                Categories
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-500 mt-1">
-                Organize store hierarchy (Smartphones, Laptops, Audio, Wearables).
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
 
-        <Link href="/admin/brands" className="group">
-          <Card className="h-full border-slate-200/80 group-hover:border-violet-300 group-hover:shadow-md transition-all">
-            <CardHeader className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <div className="p-2.5 rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
-                  <Tag className="w-5 h-5" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-violet-600 transition-colors" />
+              {/* List of Category Streamers */}
+              <div className="mt-4 space-y-3.5">
+                {categoryHighlights.map((cat) => {
+                  const Icon = cat.icon;
+                  return (
+                    <Link
+                      key={cat.name}
+                      href={cat.href}
+                      className="flex items-center justify-between p-3 rounded-2xl border border-slate-100 hover:border-violet-200 hover:bg-violet-50/40 transition-all group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${cat.color} shadow-xs`}
+                        >
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-900 group-hover:text-violet-700 truncate transition-colors">
+                            {cat.name}
+                          </p>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium mt-0.5">
+                            <span>{cat.units}</span>
+                            <span>•</span>
+                            <span className="text-amber-600">{cat.rating}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <span className="shrink-0 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                        ● {cat.status}
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
-              <CardTitle className="text-base font-semibold text-slate-900">
-                Brands
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-500 mt-1">
-                Manage manufacturers (Apple, Samsung, Sony, Dell, Anker).
-              </CardDescription>
-            </CardHeader>
+            </div>
+
+            {/* Bottom Full-Width CTA Button (Mirrors Screenshot 'Optimize AI Performance' Button) */}
+            <div className="pt-6 mt-4 border-t border-slate-100">
+              <Link href="/admin/inventory">
+                <Button className="w-full h-12 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-violet-500/20 cursor-pointer flex items-center justify-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  <span>Optimize Inventory &amp; Restock</span>
+                </Button>
+              </Link>
+            </div>
           </Card>
-        </Link>
+        </div>
       </div>
 
-      {/* Two Column Layout: Recent Products & Admin Activity Feed */}
+      {/* 4. Lower Two-Column Section: Recently Added Products & Audit Activity Log */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Recent Products List (2 cols on lg) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Recently Added Products
-            </h2>
+            <div>
+              <h2 className="text-lg font-black text-slate-900 tracking-tight font-montserrat">
+                Recently Added Gadgets
+              </h2>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Latest hardware added to Lagos and interstate stock
+              </p>
+            </div>
             <Link
               href="/admin/products"
-              className="text-xs font-semibold text-violet-600 hover:text-violet-700 flex items-center gap-1"
+              className="text-xs font-bold text-violet-600 hover:text-violet-700 flex items-center gap-1"
             >
               View all products
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <Card className="border-slate-200/80 shadow-2xs overflow-hidden">
+          <Card className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
             {recentProducts.length === 0 ? (
               <div className="p-8 text-center text-slate-400">
                 <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No products found in the catalog.</p>
+                <p className="text-sm font-semibold text-slate-600">No products found in the catalog.</p>
                 <Link href="/admin/products/new" className="mt-3 inline-block">
-                  <Button size="sm">Add First Product</Button>
+                  <Button size="sm" className="rounded-xl font-bold bg-violet-600 text-white">
+                    Add First Product
+                  </Button>
                 </Link>
               </div>
             ) : (
@@ -276,10 +335,10 @@ export default async function AdminDashboardPage() {
                   return (
                     <div
                       key={product.id}
-                      className="p-4 flex items-center justify-between gap-4 hover:bg-slate-50/70 transition-colors"
+                      className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50/70 transition-colors"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex items-center justify-center shrink-0">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200/80 overflow-hidden flex items-center justify-center shrink-0">
                           {primaryImg ? (
                             <img
                               src={primaryImg}
@@ -295,17 +354,17 @@ export default async function AdminDashboardPage() {
                           <div className="flex items-center gap-2">
                             <Link
                               href={`/admin/products/${product.id}`}
-                              className="text-sm font-semibold text-slate-900 hover:text-violet-600 truncate transition-colors"
+                              className="text-xs sm:text-sm font-bold text-slate-900 hover:text-violet-600 truncate transition-colors"
                             >
                               {product.name}
                             </Link>
                             {product.is_featured && (
-                              <Badge variant="violet" className="text-[10px] py-0">
+                              <span className="text-[10px] font-bold text-violet-700 bg-violet-50 border border-violet-200/70 px-2 py-0.5 rounded-full">
                                 Featured
-                              </Badge>
+                              </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium mt-0.5">
                             <span>{product.brand?.name || 'Generic'}</span>
                             <span>•</span>
                             <span>{product.category?.name || 'General'}</span>
@@ -315,16 +374,20 @@ export default async function AdminDashboardPage() {
 
                       <div className="flex items-center gap-4 shrink-0">
                         <div className="text-right">
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-xs sm:text-sm font-bold text-slate-900">
                             {formatNaira(product.base_price)}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-[11px] font-semibold text-slate-500">
                             {totalStock} in stock
                           </p>
                         </div>
 
                         <Link href={`/admin/products/${product.id}`}>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-xl border-slate-200 hover:border-violet-300 font-bold text-xs"
+                          >
                             Edit
                           </Button>
                         </Link>
@@ -340,43 +403,46 @@ export default async function AdminDashboardPage() {
         {/* Right Column: Admin Activity Log (1 col on lg) */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Admin Activity
-            </h2>
-            <Badge variant="secondary" className="text-[10px]">
-              Audit Log
-            </Badge>
+            <div>
+              <h2 className="text-lg font-black text-slate-900 tracking-tight font-montserrat">
+                Admin Activity
+              </h2>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Real-time security &amp; inventory audit
+              </p>
+            </div>
+            <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-full">
+              Audit Trail
+            </span>
           </div>
 
-          <Card className="border-slate-200/80 shadow-2xs">
-            <CardContent className="p-4 space-y-4">
-              {recentLogs.length === 0 ? (
-                <div className="py-6 text-center text-xs text-slate-400">
-                  <Clock className="w-5 h-5 mx-auto mb-1.5 opacity-50" />
-                  No recent audit events recorded.
-                </div>
-              ) : (
-                <div className="space-y-3.5">
-                  {recentLogs.map((log) => (
-                    <div key={log.id} className="flex items-start gap-2.5 text-xs">
-                      <div className="mt-0.5 p-1 rounded-full bg-violet-50 text-violet-600 shrink-0">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-slate-800 leading-snug">
-                          {log.description || log.action}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
-                          <span>{log.admin?.full_name || 'Admin'}</span>
-                          <span>•</span>
-                          <span>{formatDate(log.created_at)}</span>
-                        </div>
+          <Card className="rounded-3xl border border-slate-200 bg-white shadow-xs p-5">
+            {recentLogs.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400">
+                <Clock className="w-5 h-5 mx-auto mb-1.5 opacity-50" />
+                No recent audit events recorded.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentLogs.map((log) => (
+                  <div key={log.id} className="flex items-start gap-3 text-xs">
+                    <div className="mt-0.5 p-1 rounded-xl bg-violet-50 text-violet-600 shrink-0">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-slate-900 leading-snug">
+                        {log.description || log.action}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500 font-medium">
+                        <span>{log.admin?.full_name || 'Admin'}</span>
+                        <span>•</span>
+                        <span>{formatDate(log.created_at)}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </div>
       </div>

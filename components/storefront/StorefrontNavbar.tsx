@@ -61,19 +61,9 @@ export function StorefrontNavbar({ userProfile }: StorefrontNavbarProps) {
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Shop', href: '/shop' },
-    { label: 'Cart', href: '/cart' },
-    { label: 'Categories', href: '/categories' },
-    { label: 'Deals', href: '/shop?deals=true' },
-    { label: 'About', href: '/#about' },
-    { label: 'Contact', href: '/#contact' },
-  ];
-
-  const quickCategories = [
-    { name: 'Smartphones & Tablets', href: '/categories/smartphones-tablets' },
-    { name: 'Laptops & Computers', href: '/categories/laptops-computers' },
-    { name: 'Audio & Sound', href: '/categories/audio-sound' },
-    { name: 'Wearables & Smart Home', href: '/categories/wearables-smart-home' },
-    { name: 'Power & Accessories', href: '/categories/power-accessories' },
+    { label: 'Track Order', href: '/track-order' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
   ];
 
   return (
@@ -126,19 +116,19 @@ export function StorefrontNavbar({ userProfile }: StorefrontNavbarProps) {
                 onSubmit={handleSearchSubmit}
                 className="hidden md:flex items-center relative w-56 lg:w-68"
               >
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-600 pointer-events-none" />
                 <Input
                   type="text"
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 bg-slate-50 border-slate-200/80 rounded-full text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all h-9"
+                  className="w-full pl-9 pr-9 py-2 bg-white hover:bg-white focus:bg-white border border-slate-200 hover:border-violet-300 focus:border-violet-600 focus:ring-4 focus:ring-violet-500/10 rounded-full text-xs text-slate-900 placeholder:text-slate-400 transition-all h-9 shadow-2xs"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -238,13 +228,13 @@ export function StorefrontNavbar({ userProfile }: StorefrontNavbarProps) {
 
               {/* Mobile Search Form */}
               <form onSubmit={handleSearchSubmit} className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-600 pointer-events-none" />
                 <Input
                   type="text"
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border-slate-200 rounded-xl text-xs text-slate-900"
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 hover:border-violet-300 focus:border-violet-600 focus:ring-4 focus:ring-violet-500/10 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 h-10 shadow-2xs"
                 />
               </form>
 
@@ -262,24 +252,6 @@ export function StorefrontNavbar({ userProfile }: StorefrontNavbarProps) {
                   >
                     <span>{link.label}</span>
                     <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </Link>
-                ))}
-              </div>
-
-              {/* Quick Categories */}
-              <div className="space-y-1 border-t border-slate-100 pt-4">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2 mb-2">
-                  Categories
-                </p>
-                {quickCategories.map((cat) => (
-                  <Link
-                    key={cat.name}
-                    href={cat.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 text-xs font-medium text-slate-600 hover:text-violet-600 transition-colors"
-                  >
-                    <span>{cat.name}</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                   </Link>
                 ))}
               </div>

@@ -47,41 +47,41 @@ export function StorefrontFooter() {
             </div>
           </div>
 
-          {/* Col 2: Categories */}
+          {/* Col 2: Shop by Department */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-              Categories
+              Departments
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/categories/smartphones-tablets" className="hover:text-violet-600 transition-colors">
+                <Link href="/shop?category=smartphones-tablets" className="hover:text-violet-600 transition-colors">
                   Smartphones &amp; Tablets
                 </Link>
               </li>
               <li>
-                <Link href="/categories/laptops-computers" className="hover:text-violet-600 transition-colors">
+                <Link href="/shop?category=laptops-computers" className="hover:text-violet-600 transition-colors">
                   Laptops &amp; MacBooks
                 </Link>
               </li>
               <li>
-                <Link href="/categories/audio-sound" className="hover:text-violet-600 transition-colors">
+                <Link href="/shop?category=audio-sound" className="hover:text-violet-600 transition-colors">
                   Audio &amp; Headphones
                 </Link>
               </li>
               <li>
-                <Link href="/categories/wearables-smart-home" className="hover:text-violet-600 transition-colors">
+                <Link href="/shop?category=wearables-smart-home" className="hover:text-violet-600 transition-colors">
                   Smartwatches &amp; Wearables
                 </Link>
               </li>
               <li>
-                <Link href="/categories/power-accessories" className="hover:text-violet-600 transition-colors">
+                <Link href="/shop?category=power-accessories" className="hover:text-violet-600 transition-colors">
                   Power Banks &amp; GaN Chargers
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Customer Care */}
+          {/* Col 3: Customer Care & Company */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
               Customer Care
@@ -93,8 +93,13 @@ export function StorefrontFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/shop?deals=true" className="hover:text-violet-600 transition-colors">
-                  Flash Deals &amp; Discounts
+                <Link href="/about" className="hover:text-violet-600 transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-violet-600 transition-colors">
+                  Contact Support
                 </Link>
               </li>
               <li>

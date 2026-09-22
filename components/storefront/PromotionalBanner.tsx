@@ -98,7 +98,7 @@ export function PromotionalBanner() {
               asChild
               className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 h-11 rounded-xl shadow-md shadow-violet-500/25 flex items-center gap-2 inline-flex"
             >
-              <Link href="/shop?deals=true">
+              <Link href="/shop">
                 <span>Check It Out</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>

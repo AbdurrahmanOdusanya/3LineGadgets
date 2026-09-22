@@ -29,7 +29,7 @@ export function SignOutButton() {
       size="sm"
       onClick={handleSignOut}
       disabled={isPending}
-      className="text-slate-300 hover:text-white"
+      className="text-slate-700 hover:text-slate-900 border-slate-200"
     >
       {isPending ? (
         <Loader2 className="w-3.5 h-3.5 animate-spin" />

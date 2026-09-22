@@ -18,7 +18,6 @@ import { ProductCard } from '@/components/storefront/ProductCard';
 import { ProductFilters } from '@/components/storefront/ProductFilters';
 import { ProductSort } from '@/components/storefront/ProductSort';
 import { Pagination } from '@/components/storefront/Pagination';
-import { QuickViewModal } from '@/components/storefront/QuickViewModal';
 import { CartDrawer } from '@/components/storefront/CartDrawer';
 import { StorefrontFooter } from '@/components/storefront/StorefrontFooter';
 import {
@@ -75,7 +74,6 @@ export function ShopCatalogClient({
   ],
 }: ShopCatalogClientProps) {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState<StorefrontProduct | null>(null);
 
   const { products, totalCount, page, limit, totalPages } = catalogResult;
 
@@ -188,7 +186,6 @@ export function ShopCatalogClient({
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onQuickView={setQuickViewProduct}
                   />
                 ))}
               </div>
@@ -242,12 +239,6 @@ export function ShopCatalogClient({
 
       {/* Footer */}
       <StorefrontFooter />
-
-      {/* Modals */}
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-      />
 
       <CartDrawer />
     </div>

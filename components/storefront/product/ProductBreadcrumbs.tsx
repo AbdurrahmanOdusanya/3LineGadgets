@@ -49,7 +49,7 @@ export function ProductBreadcrumbs({
         {category && (
           <li className="flex items-center gap-1.5">
             <Link
-              href={`/categories/${category.slug}`}
+              href={`/shop?category=${category.slug}`}
               className="hover:text-violet-600 transition-colors whitespace-nowrap"
             >
               {category.name}

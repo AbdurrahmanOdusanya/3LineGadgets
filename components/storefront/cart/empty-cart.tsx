@@ -77,28 +77,28 @@ export function EmptyCart({ onBrowseClick, compact = false }: EmptyCartProps) {
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <Link
-            href="/categories/smartphones-tablets"
+            href="/shop?category=smartphones-tablets"
             className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-violet-50 hover:border-violet-200 text-xs font-semibold text-slate-700 hover:text-violet-700 transition-all"
           >
             <Smartphone className="w-3.5 h-3.5 text-violet-600" />
             <span>Smartphones</span>
           </Link>
           <Link
-            href="/categories/laptops-computers"
+            href="/shop?category=laptops-computers"
             className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-violet-50 hover:border-violet-200 text-xs font-semibold text-slate-700 hover:text-violet-700 transition-all"
           >
             <Laptop className="w-3.5 h-3.5 text-violet-600" />
             <span>Mac &amp; PC</span>
           </Link>
           <Link
-            href="/categories/audio-sound"
+            href="/shop?category=audio-sound"
             className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-violet-50 hover:border-violet-200 text-xs font-semibold text-slate-700 hover:text-violet-700 transition-all"
           >
             <Headphones className="w-3.5 h-3.5 text-violet-600" />
             <span>Audio &amp; ANC</span>
           </Link>
           <Link
-            href="/categories/power-accessories"
+            href="/shop?category=power-accessories"
             className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-violet-50 hover:border-violet-200 text-xs font-semibold text-slate-700 hover:text-violet-700 transition-all"
           >
             <Zap className="w-3.5 h-3.5 text-violet-600" />

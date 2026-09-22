@@ -153,16 +153,16 @@ export function ProductTable({
           className="flex flex-col sm:flex-row items-center gap-3"
         >
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-600 pointer-events-none" />
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search products by title, model, or slug..."
-              className="pl-9 h-10 w-full"
+              className="pl-9 h-10 w-full border border-slate-200 hover:border-violet-300 focus:border-violet-600 focus:ring-4 focus:ring-violet-500/10 bg-white text-slate-900 placeholder:text-slate-400 rounded-xl shadow-2xs font-normal"
             />
           </div>
 
-          <Button type="submit" variant="secondary" className="w-full sm:w-auto h-10">
+          <Button type="submit" className="w-full sm:w-auto h-10 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl shadow-xs">
             Search
           </Button>
         </form>
@@ -320,11 +320,6 @@ export function ProductTable({
                       <div className="font-semibold text-slate-900">
                         {formatNaira(product.base_price)}
                       </div>
-                      {product.compare_at_price && (
-                        <span className="text-xs text-slate-400 line-through">
-                          {formatNaira(product.compare_at_price)}
-                        </span>
-                      )}
                     </TableCell>
 
                     {/* Variants & Stock Status */}

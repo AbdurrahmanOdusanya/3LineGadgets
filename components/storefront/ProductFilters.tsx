@@ -198,7 +198,7 @@ export function ProductFilters({
         <form onSubmit={handlePriceApply} className="space-y-2.5">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[10px] text-slate-400 font-medium block mb-1">
+              <label className="text-[10px] text-slate-500 font-bold block mb-1">
                 Min Price
               </label>
               <Input
@@ -206,11 +206,11 @@ export function ProductFilters({
                 placeholder="0"
                 value={minPriceInput}
                 onChange={(e) => setMinPriceInput(e.target.value)}
-                className="h-8 text-xs bg-slate-50 border-slate-200 rounded-lg px-2"
+                className="h-8 text-xs bg-white border border-slate-200 hover:border-slate-300 focus:bg-white text-slate-900 placeholder:text-slate-400 rounded-lg px-2.5 shadow-2xs font-normal"
               />
             </div>
             <div>
-              <label className="text-[10px] text-slate-400 font-medium block mb-1">
+              <label className="text-[10px] text-slate-500 font-bold block mb-1">
                 Max Price
               </label>
               <Input
@@ -218,7 +218,7 @@ export function ProductFilters({
                 placeholder="5,000,000"
                 value={maxPriceInput}
                 onChange={(e) => setMaxPriceInput(e.target.value)}
-                className="h-8 text-xs bg-slate-50 border-slate-200 rounded-lg px-2"
+                className="h-8 text-xs bg-white border border-slate-200 hover:border-slate-300 focus:bg-white text-slate-900 placeholder:text-slate-400 rounded-lg px-2.5 shadow-2xs font-normal"
               />
             </div>
           </div>

@@ -168,11 +168,6 @@ export function CartItem({
               <span className="text-xs sm:text-sm font-semibold text-slate-900">
                 {formatNaira(item.price)}
               </span>
-              {item.compareAtPrice && item.compareAtPrice > item.price && (
-                <span className="text-xs text-slate-400 line-through">
-                  {formatNaira(item.compareAtPrice)}
-                </span>
-              )}
             </div>
 
             {/* Warnings if stale or stock issue */}

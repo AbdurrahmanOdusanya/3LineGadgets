@@ -274,12 +274,12 @@ export function InventoryManager({
       {/* Search & Filter Toolbar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
         <form onSubmit={handleSearchSubmit} className="relative flex-1 w-full max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-600 pointer-events-none" />
           <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search variant name or SKU code..."
-            className="pl-9 h-10"
+            className="pl-9 h-10 border border-slate-200 hover:border-violet-300 focus:border-violet-600 focus:ring-4 focus:ring-violet-500/10 bg-white text-slate-900 placeholder:text-slate-400 rounded-xl shadow-2xs font-normal"
           />
         </form>
 

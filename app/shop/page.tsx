@@ -86,15 +86,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         page,
         deals: onlyDeals,
       }}
-      title={onlyDeals ? 'Flash Deals & Discounts' : 'All Gadgets & Tech'}
+      title={onlyDeals ? 'Featured Gadgets' : 'All Gadgets & Tech'}
       description={
         onlyDeals
-          ? 'Special limited-time offers on genuine imported gadgets with official Lagos warranty.'
+          ? 'Curated selection of genuine imported gadgets with official Lagos warranty.'
           : 'Browse all available smartphones, laptops, studio headphones, and high-wattage power accessories.'
       }
       breadcrumbs={[
         { label: 'Home', href: '/' },
-        { label: onlyDeals ? 'Deals' : 'Shop' },
+        { label: onlyDeals ? 'Featured' : 'Shop' },
       ]}
     />
   );
