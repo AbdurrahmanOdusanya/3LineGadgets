@@ -9,7 +9,7 @@ import { getCurrentProfile } from '@/lib/auth/session';
 import { StorefrontNavbar } from '@/components/storefront/StorefrontNavbar';
 import { StorefrontFooter } from '@/components/storefront/StorefrontFooter';
 import { CartDrawer } from '@/components/storefront/CartDrawer';
-import { ChevronRight, Phone, Mail, MapPin, MessageCircle, Clock, ShieldCheck } from 'lucide-react';
+import { ChevronRight, Mail, MapPin, MessageCircle, Clock, ShieldCheck } from 'lucide-react';
 import { ContactForm } from '@/components/storefront/ContactForm';
 
 export const metadata: Metadata = {
@@ -79,10 +79,10 @@ export default async function ContactPage() {
             <h3 className="font-bold text-slate-900 text-base">Email Inquiries</h3>
             <p className="text-xs text-slate-500">Invoices, warranty claims, and corporate purchasing.</p>
             <a
-              href="mailto:support@3linegadgets.ng"
+              href="mailto:support@3linegadgets.com"
               className="inline-block text-sm font-bold text-violet-600 hover:underline"
             >
-              support@3linegadgets.ng
+              support@3linegadgets.com
             </a>
           </div>
 
@@ -92,7 +92,7 @@ export default async function ContactPage() {
             </div>
             <h3 className="font-bold text-slate-900 text-base">Lagos Hub</h3>
             <p className="text-xs text-slate-500">Ikeja / Victoria Island pickup & dispatch centers.</p>
-            <p className="text-sm font-semibold text-slate-800">Lagos, Nigeria</p>
+            <p className="text-sm font-semibold text-slate-800">Otigba Street, Computer Village, Ikeja, Lagos</p>
           </div>
         </div>
 
@@ -100,7 +100,7 @@ export default async function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-xs">
             <h2 className="text-xl font-bold text-slate-900 mb-2">Send Us a Message</h2>
-            <p className="text-xs text-slate-500 mb-6">Fill out the form below and we will get back to you within 2 hours during business hours.</p>
+            <p className="text-xs text-slate-500 mb-6">Fill out the form below and our team will get back to you within 2 hours during business hours.</p>
             <ContactForm />
           </div>
 

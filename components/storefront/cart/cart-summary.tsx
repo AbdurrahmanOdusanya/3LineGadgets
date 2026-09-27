@@ -141,18 +141,6 @@ export function CartSummary({
           Taxes and delivery fees calculated during checkout based on your delivery address in Nigeria.
         </p>
       </div>
-
-      {/* Trust Badges */}
-      <div className="pt-4 border-t border-slate-100 space-y-2.5">
-        <div className="flex items-center gap-2.5 text-xs text-slate-600">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>100% Guaranteed Authentic Hardware with Official Lagos Warranty</span>
-        </div>
-        <div className="flex items-center gap-2.5 text-xs text-slate-600">
-          <Truck className="w-4 h-4 text-violet-600 shrink-0" />
-          <span>Express Delivery in Lagos • Secure Nationwide Shipping</span>
-        </div>
-      </div>
     </div>
   );
 }

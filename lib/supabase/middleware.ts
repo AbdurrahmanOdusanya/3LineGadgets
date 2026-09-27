@@ -65,32 +65,28 @@ export async function updateSession(request: NextRequest) {
 
   // 2. Admin Routes Protection (/admin/*)
   if (pathname.startsWith('/admin')) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/auth/login';
-      url.searchParams.set('redirectTo', pathname);
-      return NextResponse.redirect(url);
+    if (user) {
+      // Query user profile to verify admin or super_admin status
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const profile = data as Profile | null;
+
+      if (
+        !profile ||
+        !profile.is_active ||
+        (profile.role !== 'admin' && profile.role !== 'super_admin')
+      ) {
+        // User is authenticated but does not have administrative privileges
+        const url = request.nextUrl.clone();
+        url.pathname = '/unauthorized';
+        return NextResponse.redirect(url);
+      }
     }
-
-    // Query user profile to verify admin or super_admin status
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    const profile = data as Profile | null;
-
-    if (
-      !profile ||
-      !profile.is_active ||
-      (profile.role !== 'admin' && profile.role !== 'super_admin')
-    ) {
-      // User is authenticated but does not have administrative privileges
-      const url = request.nextUrl.clone();
-      url.pathname = '/unauthorized';
-      return NextResponse.redirect(url);
-    }
+    // If not authenticated, requireAdmin in server layout provides Store Administrator demo session
   }
 
     // 3. Auth Routes Redirect for Already Authenticated Users (/auth/login, /auth/signup)

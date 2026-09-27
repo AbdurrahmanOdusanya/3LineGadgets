@@ -13,7 +13,6 @@ import {
   ChevronRight,
   Maximize2,
   Package,
-  Sparkles,
 } from 'lucide-react';
 
 interface ProductGalleryProps {
@@ -80,16 +79,6 @@ export function ProductGallery({
     <div className="w-full flex flex-col gap-4 select-none">
       {/* Main Image Stage */}
       <div className="relative w-full aspect-square bg-slate-50/70 border border-slate-100 rounded-3xl overflow-hidden flex items-center justify-center p-6 group">
-        {/* Badges Overlay */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-          {isFeatured && (
-            <span className="inline-flex items-center gap-1 bg-violet-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
-              <Sparkles className="w-3 h-3" />
-              Featured
-            </span>
-          )}
-        </div>
-
         {/* Zoom Button */}
         <button
           type="button"

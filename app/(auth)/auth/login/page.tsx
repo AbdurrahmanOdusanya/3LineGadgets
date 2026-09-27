@@ -19,7 +19,7 @@ export default function LoginPage() {
           Sign In to 3Line Gadgets
         </CardTitle>
         <CardDescription className="text-xs sm:text-sm text-slate-600 font-medium font-manrope max-w-sm mx-auto mt-1 leading-relaxed">
-          Access your account, track live deliveries in Lagos and nationwide, and view saved orders.
+          Sign in to purchase authentic imported gadgets with nationwide tracked delivery.
         </CardDescription>
       </CardHeader>
 

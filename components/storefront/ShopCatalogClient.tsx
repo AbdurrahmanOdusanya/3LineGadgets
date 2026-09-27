@@ -113,28 +113,31 @@ export function ShopCatalogClient({
         </div>
 
         {/* Top Control Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-100 shadow-xs">
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-            {/* Mobile Filter Sheet Button */}
-            <Button
-              onClick={() => setMobileFilterOpen(true)}
-              variant="outline"
-              size="sm"
-              className="lg:hidden flex items-center gap-2 text-xs font-semibold rounded-xl border-slate-200"
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-violet-600" />
-              <span>Filters</span>
-            </Button>
-
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-100 shadow-xs">
+          <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
             <span className="text-xs font-medium text-slate-500">
               Found <strong className="text-slate-900 font-bold">{totalCount}</strong>{' '}
               {totalCount === 1 ? 'gadget' : 'gadgets'}
             </span>
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="w-full sm:w-auto flex justify-end">
-            <ProductSort currentSort={currentParams.sort || 'featured'} />
+          {/* Action Row: Mobile filter button + Sort dropdown */}
+          <div className="flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            {/* Mobile Filter Sheet Button */}
+            <Button
+              onClick={() => setMobileFilterOpen(true)}
+              variant="outline"
+              size="sm"
+              className="lg:hidden flex-1 sm:flex-initial flex items-center justify-center gap-2 text-xs font-semibold rounded-xl border-slate-200 h-9 px-3.5 bg-slate-50/60 hover:bg-slate-100 text-slate-800 shadow-2xs touch-manipulation active:scale-95 transition-all"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-violet-600 shrink-0" />
+              <span>Filters</span>
+            </Button>
+
+            {/* Sort Dropdown */}
+            <div className="flex-1 sm:flex-initial w-auto">
+              <ProductSort currentSort={currentParams.sort || 'featured'} />
+            </div>
           </div>
         </div>
 
@@ -181,7 +184,7 @@ export function ShopCatalogClient({
               </div>
             ) : (
               /* Product Grid */
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 {products.map((product) => (
                   <ProductCard
                     key={product.id}

@@ -4,7 +4,7 @@
 // ==============================================================================
 
 import Link from 'next/link';
-import { ArrowLeft, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function AuthLayout({
   children,
@@ -47,19 +47,6 @@ export default function AuthLayout({
       {/* Main Auth Container */}
       <main className="max-w-md w-full mx-auto my-6 sm:my-10 relative z-10">
         {children}
-
-        {/* Security & Authenticity Trust Badge */}
-        <div className="mt-6 flex items-center justify-center gap-3 text-xs text-slate-500">
-          <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>256-Bit SSL Encrypted</span>
-          </div>
-          <span className="text-slate-300">·</span>
-          <div className="flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-violet-600" />
-            <span>100% Genuine Tech</span>
-          </div>
-        </div>
       </main>
 
       {/* Footer copyright & ancillary links */}

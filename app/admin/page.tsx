@@ -358,11 +358,6 @@ export default async function AdminDashboardPage() {
                             >
                               {product.name}
                             </Link>
-                            {product.is_featured && (
-                              <span className="text-[10px] font-bold text-violet-700 bg-violet-50 border border-violet-200/70 px-2 py-0.5 rounded-full">
-                                Featured
-                              </span>
-                            )}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-slate-500 font-medium mt-0.5">
                             <span>{product.brand?.name || 'Generic'}</span>

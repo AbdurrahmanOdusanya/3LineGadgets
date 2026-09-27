@@ -26,7 +26,7 @@ export function ContactForm() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate fast reliable submission
+    // Simulate reliable submission
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
@@ -39,7 +39,7 @@ export function ContactForm() {
         <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
         <h3 className="font-bold text-slate-900 text-base">Message Sent Successfully!</h3>
         <p className="text-xs text-slate-600 max-w-md mx-auto">
-          Thank you for reaching out, <span className="font-semibold">{formData.name}</span>. A representative from our Lagos desk has received your ticket and will respond within 2 hours.
+          Thank you for reaching out, <span className="font-semibold">{formData.name}</span>. A representative from our Lagos desk has received your inquiry and will respond within 2 hours.
         </p>
         <Button
           onClick={() => {
@@ -74,7 +74,7 @@ export function ContactForm() {
             placeholder="e.g. Tunde Adebayo"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="rounded-xl text-xs h-10 border-slate-200 focus:border-violet-600 focus:ring-violet-400"
+            className="rounded-xl text-xs h-10 border-slate-200 focus:border-violet-600 focus:ring-violet-400 bg-white"
           />
         </div>
 
@@ -89,7 +89,7 @@ export function ContactForm() {
             placeholder="you@example.com"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="rounded-xl text-xs h-10 border-slate-200 focus:border-violet-600 focus:ring-violet-400"
+            className="rounded-xl text-xs h-10 border-slate-200 focus:border-violet-600 focus:ring-violet-400 bg-white"
           />
         </div>
       </div>
@@ -105,7 +105,7 @@ export function ContactForm() {
             placeholder="e.g. 08012345678"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="rounded-xl text-xs h-10 border-slate-200 focus:border-violet-600 focus:ring-violet-400"
+            className="rounded-xl text-xs h-10 border-slate-200 focus:border-violet-600 focus:ring-violet-400 bg-white"
           />
         </div>
 
@@ -138,14 +138,14 @@ export function ContactForm() {
           placeholder="How can we assist you today? Please provide any relevant order ID if applicable."
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-          className="w-full rounded-xl p-3 text-xs border border-slate-200 focus:border-violet-600 focus:ring-violet-400 text-slate-800 outline-hidden"
+          className="w-full rounded-xl p-3 text-xs border border-slate-200 focus:border-violet-600 focus:ring-violet-400 text-slate-800 outline-hidden bg-white"
         />
       </div>
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md shadow-violet-500/20 flex items-center justify-center gap-2"
+        className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md shadow-violet-500/20 flex items-center justify-center gap-2 cursor-pointer"
       >
         {loading ? (
           <>
