@@ -31,8 +31,10 @@ import {
   Headphones,
   Watch,
   Zap,
+  ShoppingBag,
 } from 'lucide-react';
 import { formatNaira, formatDate } from '@/lib/utils';
+import { getAllOrders } from '@/lib/orders/store';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,13 +42,16 @@ export default async function AdminDashboardPage() {
   const { profile } = await requireAdmin('/admin');
 
   // Fetch dashboard data in parallel
-  const [stats, recentProductsResult, recentLogs] = await Promise.all([
+  const [stats, recentProductsResult, recentLogs, allOrders] = await Promise.all([
     getInventoryStats(),
     getAdminProducts({ limit: 5 }),
     getRecentAdminActivityLogs(5),
+    getAllOrders(),
   ]);
 
   const recentProducts = recentProductsResult.products;
+  const recentOrders = allOrders.slice(0, 5);
+  const pendingOrdersCount = allOrders.filter((o) => o.payment_status === 'pending').length;
   const adminFirstName = profile.full_name?.split(' ')[0] || 'Admin';
 
   // Fast-moving category items (mirroring the right card in reference screenshot)
@@ -103,9 +108,20 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <Link href="/admin/orders">
+            <Button className="h-11 px-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/20 cursor-pointer flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4" />
+              <span>Customer Orders</span>
+              {pendingOrdersCount > 0 && (
+                <span className="h-5 px-1.5 rounded-full bg-slate-950 text-white text-[10px] font-bold flex items-center justify-center">
+                  {pendingOrdersCount}
+                </span>
+              )}
+            </Button>
+          </Link>
           <Link href="/admin/products/new">
-            <Button className="h-11 px-5 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-violet-500/20 cursor-pointer flex items-center gap-2">
+            <Button className="h-11 px-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-violet-500/20 cursor-pointer flex items-center gap-2">
               <Plus className="w-4 h-4" />
               <span>Add Product</span>
             </Button>
@@ -113,7 +129,7 @@ export default async function AdminDashboardPage() {
           <Link href="/admin/inventory">
             <Button
               variant="outline"
-              className="h-11 px-5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm shadow-2xs cursor-pointer flex items-center gap-2"
+              className="h-11 px-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm shadow-2xs cursor-pointer flex items-center gap-2"
             >
               <Boxes className="w-4 h-4 text-violet-600" />
               <span>Adjust Stock</span>
@@ -287,7 +303,112 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 4. Lower Two-Column Section: Recently Added Products & Audit Activity Log */}
+      {/* 4. Recent Bank Transfer Orders Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-black text-slate-900 tracking-tight font-montserrat flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-violet-600" />
+              <span>Recent Bank Transfer Orders</span>
+            </h2>
+            <p className="text-xs text-slate-500 font-medium mt-0.5 font-manrope">
+              Live incoming customer gadget orders pending or cleared via manual bank transfer
+            </p>
+          </div>
+          <Link
+            href="/admin/orders"
+            className="text-xs font-bold text-violet-600 hover:text-violet-700 flex items-center gap-1"
+          >
+            <span>View all orders ({allOrders.length})</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <Card className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+          {recentOrders.length === 0 ? (
+            <div className="p-8 text-center text-slate-400">
+              <ShoppingBag className="w-8 h-8 mx-auto mb-2 opacity-40 text-slate-400" />
+              <p className="text-sm font-bold text-slate-700">No Orders Placed Yet</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Orders placed through manual bank transfer will appear here with instant tracking codes.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50/75 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                    <th className="py-3 px-5">Order / Tracking</th>
+                    <th className="py-3 px-4">Customer</th>
+                    <th className="py-3 px-4">Bank Transferred To</th>
+                    <th className="py-3 px-4">Total Amount</th>
+                    <th className="py-3 px-4">Payment</th>
+                    <th className="py-3 px-5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {recentOrders.map((ord) => (
+                    <tr key={ord.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="py-3.5 px-5">
+                        <span className="font-mono font-bold text-slate-900 block">
+                          {ord.order_number}
+                        </span>
+                        <span className="text-[11px] font-mono text-violet-700 bg-violet-50 px-2 py-0.5 rounded-md inline-block mt-0.5">
+                          {ord.tracking_code}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <p className="font-bold text-slate-900">{ord.customer.full_name}</p>
+                        <p className="text-[11px] text-slate-500">{ord.customer.phone}</p>
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-600">
+                        <span className="font-bold text-slate-800 block">
+                          {ord.bank_details.bank_name}
+                        </span>
+                        <span className="text-[11px] font-mono text-slate-500">
+                          {ord.bank_details.account_number}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="font-black text-slate-900 text-sm">
+                          {formatNaira(ord.total_amount)}
+                        </span>
+                        <span className="block text-[10px] text-slate-400">
+                          {ord.items.length} item{ord.items.length !== 1 ? 's' : ''}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {ord.payment_status === 'successful' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60">
+                            ● Verified
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200/60">
+                            ● Pending Verification
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-5 text-right">
+                        <Link href="/admin/orders">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-3 rounded-xl border-slate-200 hover:border-violet-300 font-bold text-xs"
+                          >
+                            Manage
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* 5. Lower Two-Column Section: Recently Added Products & Audit Activity Log */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Recent Products List (2 cols on lg) */}
         <div className="lg:col-span-2 space-y-4">

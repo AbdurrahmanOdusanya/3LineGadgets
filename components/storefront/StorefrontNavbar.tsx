@@ -15,7 +15,6 @@ import {
   Heart,
   User,
   Search,
-  LayoutDashboard,
   Menu,
   X,
   Sparkles,
@@ -231,15 +230,6 @@ export function StorefrontNavbar({ userProfile }: StorefrontNavbarProps) {
                 <Search className="w-5 h-5" />
               </button>
 
-              {/* Admin Console Shortcut */}
-              <Link
-                href="/admin"
-                className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 border border-violet-200 text-violet-700 hover:bg-violet-100 text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
-              >
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>Admin</span>
-              </Link>
-
               {/* Wishlist Icon (Desktop, Tablet, Mobile) */}
               <Link
                 href="/shop?filter=wishlist"
@@ -445,18 +435,6 @@ export function StorefrontNavbar({ userProfile }: StorefrontNavbarProps) {
                     <span>My Customer Account</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                </Link>
-
-                <Link
-                  href="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-between px-3.5 py-3 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className="w-4 h-4 text-violet-600" />
-                    <span>Admin Console</span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-violet-400" />
                 </Link>
               </div>
             </div>

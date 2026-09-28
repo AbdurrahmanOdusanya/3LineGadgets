@@ -68,7 +68,7 @@ export function ProductDetailsClient({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* LEFT COLUMN: Product Image Gallery (5 cols on lg, 6 on xl) */}
-          <div className="lg:col-span-6 xl:col-span-6 sticky top-24">
+          <div className="lg:col-span-6 xl:col-span-6 w-full">
             <ProductGallery
               images={product.images}
               productName={product.name}

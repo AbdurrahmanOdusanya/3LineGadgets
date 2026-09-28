@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="en" className={`${manrope.variable} ${montserrat.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${montserrat.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-[#fafafa] text-slate-900 font-sans antialiased selection:bg-violet-500 selection:text-white">
         <AppProviders>{children}</AppProviders>
       </body>

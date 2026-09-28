@@ -15,12 +15,14 @@ import {
   Layers,
   Tag,
   Boxes,
+  ShoppingBag,
   ExternalLink,
   LogOut,
   Sparkles,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
@@ -47,6 +49,17 @@ export function AdminSidebar({
   const pathname = usePathname();
   const router = useRouter();
 
+  // Close sidebar drawer on Escape key press
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen && onClose) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleSignOut = async () => {
     try {
       const supabase = createClient();
@@ -64,6 +77,12 @@ export function AdminSidebar({
       href: '/admin',
       icon: LayoutDashboard,
       active: pathname === '/admin',
+    },
+    {
+      name: 'Orders',
+      href: '/admin/orders',
+      icon: ShoppingBag,
+      active: pathname.startsWith('/admin/orders'),
     },
     {
       name: 'Products',

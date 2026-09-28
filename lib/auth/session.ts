@@ -62,7 +62,6 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
 
 export const DEMO_ADMIN_PROFILE: Profile = {
   id: 'ad000000-0000-0000-0000-000000000001',
-  email: 'admin@3linegadgets.ng',
   full_name: 'Store Administrator',
   avatar_url: null,
   role: 'super_admin',
